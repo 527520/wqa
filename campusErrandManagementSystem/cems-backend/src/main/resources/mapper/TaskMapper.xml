@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.TaskMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Task">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="deliverymanId" column="deliveryman_id" jdbcType="BIGINT"/>
+            <result property="serviceType" column="service_type" jdbcType="VARCHAR"/>
+            <result property="itemName" column="item_name" jdbcType="VARCHAR"/>
+            <result property="fetchAddress" column="fetch_address" jdbcType="VARCHAR"/>
+            <result property="shippingAddress" column="shipping_address" jdbcType="VARCHAR"/>
+            <result property="itemWeight" column="item_weight" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="publishTime" column="publish_time" jdbcType="TIMESTAMP"/>
+            <result property="estimatedCompletionTime" column="estimated_completion_time" jdbcType="TIMESTAMP"/>
+            <result property="completionTime" column="completion_time" jdbcType="TIMESTAMP"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,user_id,deliveryman_id,
+        service_type,item_name,fetch_address,shipping_address,
+        item_weight,description,status,
+        publish_time,estimated_completion_time,completion_time,
+        price,is_deleted
+    </sql>
+    <select id="selectAllByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+        order by publish_time desc
+    </select>
+    <select id="getStatusById" resultType="string">
+        select status
+        from task
+        where id = #{id,jdbcType=NUMERIC}
+    </select>
+    <select id="getAllByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where
+        status = '待接单'
+    </select>
+    <select id="selectOneByDeliverymanIdAndStatusOrStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where
+        deliveryman_id = #{deliverymanId,jdbcType=NUMERIC}
+        AND status = #{status1,jdbcType=VARCHAR}
+        <if test="status2 != null">
+            OR status = #{status2,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="selectAllByDeliverymanId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where
+        deliveryman_id = #{deliverymanId,jdbcType=NUMERIC}
+        order by publish_time desc
+    </select>
+    <select id="selectAllByUserIdAndStatusOrStatusOrderByPublishTimeDesc" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+        AND (status = #{status,jdbcType=VARCHAR}
+        <if test="oldStatus != null">
+        OR status = #{oldStatus,jdbcType=VARCHAR}
+        </if>
+        )
+        order by publish_time desc
+    </select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.AnnouncementMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Announcement">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="publishDate" column="publish_date" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isActive" column="is_active" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,title,content,
+        publish_date,update_time,is_active
+    </sql>
+    <select id="selectAllOrderByPublishDateDescLimit5" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from announcement
+        where is_active = 1
+        order by publish_date desc LIMIT 5
+    </select>
+</mapper>

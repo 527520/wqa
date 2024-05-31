@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.RecruitMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Recruit">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="publishTime" column="publish_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,content,
+        publish_time,status
+    </sql>
+    <select id="searchAllByContentLikeOrTitleLikeOrderByPublishTimeDesc" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from recruit
+        where
+        <if test="searchValue != null">
+            (content like CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
+            OR title like CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%'))
+            and
+        </if>
+        status = 0
+        order by publish_time desc
+    </select>
+</mapper>

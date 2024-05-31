@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.User">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userAccount" column="user_account" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isdelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapInfo" type="com.wqa.cems.model.entity.User">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userAccount" column="user_account" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,user_account,password,
+        username,phone_number,user_avatar,
+        role,create_time,update_time,
+        isDelete
+    </sql>
+    <sql id="Base_Column_ListInfo">
+        id
+        ,user_account,
+        username,phone_number,
+        role,create_time
+    </sql>
+    <select id="selectAllByRole" resultMap="BaseResultMapInfo">
+        select
+        <include refid="Base_Column_ListInfo"/>
+        from user
+        where
+        role = #{role,jdbcType=VARCHAR}
+        and isDelete = 0
+    </select>
+
+    <select id="searchUsers" resultMap="BaseResultMapInfo">
+        SELECT
+        <include refid="Base_Column_ListInfo"/>
+        FROM user
+        WHERE
+        <choose>
+            <when test="field == 'id'">
+                id LIKE CONCAT('%', #{fieldValue,jdbcType=NUMERIC}, '%')
+            </when>
+            <when test="field == 'user_account'">
+                user_account LIKE CONCAT('%', #{fieldValue,jdbcType=VARCHAR}, '%')
+            </when>
+            <when test="field == 'username'">
+                username LIKE CONCAT('%', #{fieldValue,jdbcType=VARCHAR}, '%')
+            </when>
+            <when test="field == 'phone_number'">
+                phone_number LIKE CONCAT('%', #{fieldValue,jdbcType=VARCHAR}, '%')
+            </when>
+            <otherwise>
+                id LIKE CONCAT('%', #{fieldValue,jdbcType=NUMERIC}, '%')
+            </otherwise>
+        </choose>
+        and role = 'user'
+    </select>
+</mapper>

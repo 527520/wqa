@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.AddressMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Address">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
+            <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+            <result property="isDefault" column="is_default" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,address,
+        consignee,phone_number,is_default
+    </sql>
+    <select id="selectOneByUserIdAndIsDefault" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from address
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+        AND is_default = 1
+    </select>
+    <update id="updateIsDefaultByUserIdAndIsDefault">
+        update address
+        set is_default = 0
+        where user_id = #{userId,jdbcType=NUMERIC}
+          AND is_default = 1
+    </update>
+    <select id="selectAllByUserIdOrderByIsDefaultDesc" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from address
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+        order by is_default desc
+    </select>
+</mapper>

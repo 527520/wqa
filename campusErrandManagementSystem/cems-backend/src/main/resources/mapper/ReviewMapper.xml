@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.ReviewMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Review">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+        <result property="reviewerId" column="reviewer_id" jdbcType="BIGINT"/>
+        <result property="reviewedId" column="reviewed_id" jdbcType="BIGINT"/>
+        <result property="rating" column="rating" jdbcType="DECIMAL"/>
+        <result property="comment" column="comment" jdbcType="VARCHAR"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,order_id,reviewer_id,
+        reviewed_id,rating,comment,
+        image,review_time,is_delete
+    </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from review
+        where is_delete = 0
+        order by review_time desc
+    </select>
+    <select id="searchReviews" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT r.*, reviewer.username AS reviewerName, reviewed.username AS reviewedName
+        FROM review r
+                 INNER JOIN user reviewer ON r.reviewer_id = reviewer.id
+                 INNER JOIN user reviewed ON r.reviewed_id = reviewed.id
+        WHERE reviewer.username LIKE CONCAT('%', #{searchKeyword,jdbcType=VARCHAR}, '%')
+           OR reviewed.username LIKE CONCAT('%', #{searchKeyword,jdbcType=VARCHAR}, '%')
+           OR r.comment LIKE CONCAT('%', #{searchKeyword,jdbcType=VARCHAR}, '%')
+        order by review_time desc
+    </select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Order">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="deliverymanId" column="deliveryman_id" jdbcType="BIGINT"/>
+            <result property="taskId" column="task_id" jdbcType="BIGINT"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="orderTime" column="order_time" jdbcType="TIMESTAMP"/>
+            <result property="fetchAddress" column="fetch_address" jdbcType="VARCHAR"/>
+            <result property="shippingAddress" column="shipping_address" jdbcType="VARCHAR"/>
+            <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+            <result property="receiverPhoneNumber" column="receiver_phone_number" jdbcType="VARCHAR"/>
+            <result property="orderAmount" column="order_amount" jdbcType="DECIMAL"/>
+            <result property="orderNote" column="order_note" jdbcType="VARCHAR"/>
+            <result property="estimatedCompletionTime" column="estimated_completion_time" jdbcType="TIMESTAMP"/>
+            <result property="completionTime" column="completion_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,deliveryman_id,
+        task_id,status,order_time,
+        fetch_address,shipping_address,receiver_name,
+        receiver_phone_number,order_amount,order_note,
+        estimated_completion_time,completion_time,is_delete
+    </sql>
+    <select id="selectStatusById" resultType="string">
+        select status
+        from order
+        where id = #{id,jdbcType=NUMERIC}
+    </select>
+    <update id="updateStatusById">
+        update order
+        set status = #{status,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=NUMERIC}
+    </update>
+    <select id="selectOneByTaskId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `order`
+        where
+        task_id = #{taskId,jdbcType=NUMERIC}
+    </select>
+</mapper>

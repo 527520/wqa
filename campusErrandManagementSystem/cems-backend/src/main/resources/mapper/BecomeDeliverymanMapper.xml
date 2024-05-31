@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.BecomeDeliverymanMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.BecomeDeliveryman">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="idNumber" column="id_number" jdbcType="VARCHAR"/>
+            <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="VARCHAR"/>
+            <result property="birthday" column="birthday" jdbcType="DATE"/>
+            <result property="idCardFrontImage" column="id_card_front_image" jdbcType="VARCHAR"/>
+            <result property="idCardBackImage" column="id_card_back_image" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="message" column="message" jdbcType="VARCHAR"/>
+            <result property="isdelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapVO" type="com.wqa.cems.model.vo.BecomeDeliverymanVO">
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="message" column="message" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,user_id,id_number,phone_number,
+        name,sex,birthday,
+        id_card_front_image,id_card_back_image,create_time,
+        update_time,status,message,
+        isDelete
+    </sql>
+    <sql id="Base_Column_ListVO">
+        status
+        ,message
+    </sql>
+    <select id="selectOneVOByUserId" resultMap="BaseResultMapVO">
+        select <include refid="Base_Column_ListVO"/>
+        from become_deliveryman
+        where user_id = #{userId,jdbcType=NUMERIC}
+    </select>
+    <select id="selectOneByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from become_deliveryman
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+    </select>
+    <select id="getAllByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from become_deliveryman
+        where
+        status != '审核通过'
+    </select>
+</mapper>
