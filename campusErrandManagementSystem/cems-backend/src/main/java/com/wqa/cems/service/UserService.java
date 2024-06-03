@@ -124,4 +124,6 @@ public interface UserService extends IService<User> {
     PageInfo<UserInfo> getListUserInfoByRole(long current, long size, String defaultRole);
 
     PageInfo<UserInfo> search(long current, long size, String field, String fieldValue);
+
+    String getUserNameById(Long id);
 }

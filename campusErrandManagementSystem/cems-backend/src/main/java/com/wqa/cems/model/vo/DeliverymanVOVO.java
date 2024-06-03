@@ -16,6 +16,11 @@ public class DeliverymanVOVO implements Serializable {
     private Long id;
 
     /**
+     * 用户id
+     */
+    private Long userId;
+
+    /**
      * 姓名
      */
     private String name;

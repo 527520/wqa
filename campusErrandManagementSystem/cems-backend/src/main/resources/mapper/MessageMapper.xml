@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqa.cems.mapper.MessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.wqa.cems.model.entity.Message">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="formUserId" column="form_user_id" jdbcType="BIGINT"/>
+            <result property="toUserId" column="to_user_id" jdbcType="BIGINT"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="formAvatar" column="form_avatar" jdbcType="VARCHAR"/>
+            <result property="toAvatar" column="to_avatar" jdbcType="VARCHAR"/>
+            <result property="time" column="time" jdbcType="TIMESTAMP"/>
+            <result property="isRead" column="is_read" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,form_user_id,to_user_id,
+        content,form_avatar,to_avatar,
+        time,is_read
+    </sql>
+    <update id="updateIsReadById">
+        update message
+        set is_read = 1
+        where id = #{id,jdbcType=NUMERIC}
+    </update>
+
+    <select id="getChatList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM message m
+        JOIN (SELECT IF(form_user_id = #{userId}, to_user_id, form_user_id) AS user_id,
+        MAX(id) AS max_id
+        FROM message
+        WHERE form_user_id = #{userId}
+        OR to_user_id = #{userId}
+        GROUP BY IF(form_user_id = #{userId}, to_user_id, form_user_id)) t
+        ON (m.form_user_id = t.user_id OR m.to_user_id = t.user_id) AND m.id = t.max_id
+    </select>
+
+    <select id="getAllUnreadMessages" resultType="int">
+        SELECT count(*)
+        FROM message
+        WHERE to_user_id = #{userId}
+        AND is_read = 0
+    </select>
+
+    <select id="getUnreadMessages" resultType="int">
+        SELECT count(*)
+        FROM message
+        WHERE from_user_id = #{formUserId}
+        AND to_user_id = #{toUserId}
+        AND is_read = 0
+    </select>
+</mapper>

@@ -17,6 +17,8 @@ public interface UserMapper extends BaseMapper<User> {
     List<UserInfo> selectAllByRole(@Param("role") String role);
 
     List<UserInfo> searchUsers(@Param("field") String field, @Param("fieldValue") String fieldValue);
+
+    String getUsernameById(@Param("id") Long id);
 }
 
 

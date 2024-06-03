@@ -44,6 +44,11 @@ public class TaskVO implements Serializable {
      */
     private BigDecimal price;
 
+    /**
+     * 发布的用户id
+     */
+    private Long userId;
+
     private static final long serialVersionUID = 1L;
 
     public static TaskVO objToVo(Task task) {

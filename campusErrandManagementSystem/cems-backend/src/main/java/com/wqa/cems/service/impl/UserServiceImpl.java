@@ -332,6 +332,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         List<UserInfo> userInfos = userMapper.searchUsers(field, fieldValue);
         return new PageInfo<>(userInfos, 5);
     }
+
+    @Override
+    public String getUserNameById(Long id) {
+        return userMapper.getUsernameById(id);
+    }
 }
 
 

@@ -72,4 +72,10 @@
         </choose>
         and role = 'user'
     </select>
+
+    <select id="getUsernameById" resultType="string">
+        select username
+        from user
+        where id = #{id,jdbcType=NUMERIC}
+    </select>
 </mapper>

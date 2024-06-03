@@ -26,6 +26,7 @@ import ReviewsManagementView from "@/views/admin/ReviewsManagementView.vue";
 import RecruitManagementView from "@/views/admin/RecruitManagementView.vue";
 import RecruitInfoView from "@/views/user/RecruitInfoView.vue";
 import DeliverymanPortraits from "@/views/deliveryman/DeliverymanPortraits.vue";
+import ChatView from "@/views/ChatView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -199,6 +200,14 @@ export const routes: Array<RouteRecordRaw> = [
     component: RecruitManagementView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/chat",
+    name: "聊天",
+    component: ChatView,
+    meta: {
+      hideInMenu: true,
     },
   },
   // {

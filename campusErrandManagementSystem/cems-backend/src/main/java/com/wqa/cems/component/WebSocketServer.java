@@ -1,10 +1,15 @@
 package com.wqa.cems.component;
 
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wqa.cems.model.entity.Message;
+import com.wqa.cems.model.entity.User;
+import com.wqa.cems.model.vo.UserVO;
+import com.wqa.cems.service.MessageService;
+import com.wqa.cems.service.UserService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -25,11 +30,19 @@ public class WebSocketServer {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    // 从Spring上下文中获取MessageService实例
+    private final MessageService messageService;
+    private final UserService userService;
+
+    public WebSocketServer() {
+        this.messageService = SpringContextUtil.getBean(MessageService.class);
+        this.userService = SpringContextUtil.getBean(UserService.class);
+    }
+
     /**
      * 连接成功调用的方法
      *
      * @param session
-     * @param id
      */
     @OnOpen
     public void onOpen(Session session) {
@@ -62,24 +75,39 @@ public class WebSocketServer {
      *
      * @param message
      * @param session
-     * @param id
      */
     @OnMessage
-    public void onMessage(String message, Session session, @PathParam("id") String id) {
-        log.info("服务端收到用户id={}的消息：{}", id, message);
+    public void onMessage(String message, Session session) {
         JSONObject object = JSONUtil.parseObj(message);
         String toId = object.getStr("to");
-        String text = object.getStr("text");
+        String formId = object.getStr("form");
+        String messageText = object.getStr("messageText");
+        String counterpartAvatar = object.getStr("counterpartAvatar");
+        String toAvatar = object.getStr("toAvatar");
+        log.info("服务端收到用户id={}的消息：{}", formId, message);
         Session toSession = sessionMap.get(toId);
+        Message messageEntity;
         if (toSession != null) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.set("form", id);
-            jsonObject.set("text", text);
+            jsonObject.set("form", formId);
+            jsonObject.set("messageText", messageText);
+            jsonObject.set("counterpartAvatar", counterpartAvatar);
             this.sendMessage(jsonObject.toString(), toSession);
+            messageEntity = new Message(null, Long.parseLong(formId), Long.parseLong(toId),
+                    messageText, counterpartAvatar, null, null, 1);
             log.info("发送消息{}给用户{}", jsonObject.toString(), toId);
         } else {
+            messageEntity = new Message(null, Long.parseLong(formId), Long.parseLong(toId),
+                    messageText, counterpartAvatar, null, null, 0);
             log.info("发送失败，未找到{}的session", toId);
         }
+        if (toAvatar == null || toAvatar.isEmpty()) {
+            User user = userService.getById(Long.parseLong(toId));
+            messageEntity.setToAvatar(user.getUserAvatar());
+        } else {
+            messageEntity.setToAvatar(toAvatar);
+        }
+        messageService.save(messageEntity);
     }
 
     @OnError
