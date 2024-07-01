@@ -1,6 +1,9 @@
 package com.wqa.cems.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.checkerframework.checker.formatter.qual.Format;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -43,6 +46,7 @@ public class MessageVO implements Serializable {
     /**
      * 发送时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date time;
 
     /**

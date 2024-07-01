@@ -49,7 +49,7 @@
     <select id="getUnreadMessages" resultType="int">
         SELECT count(*)
         FROM message
-        WHERE from_user_id = #{formUserId}
+        WHERE form_user_id = #{formUserId}
         AND to_user_id = #{toUserId}
         AND is_read = 0
     </select>

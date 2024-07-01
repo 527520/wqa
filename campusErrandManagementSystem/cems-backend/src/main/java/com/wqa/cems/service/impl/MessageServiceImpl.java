@@ -30,15 +30,18 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     private UserService userService;
 
     @Override
-    public List<Message> getMessageList(Long id) {
+    public List<Message> getMessageList(Long id, Long counterpartId) {
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("toUserId", id)
+        queryWrapper.eq("to_user_id", id)
+                .eq("form_user_id", counterpartId)
                 .or()
+                .eq("to_user_id", counterpartId)
                 .eq("form_user_id", id)
                 .orderByAsc("time");
         List<Message> messageList = messageMapper.selectList(queryWrapper);
         messageList.stream()
                 .filter(message -> message.getIsRead() == 0)
+                .filter(message -> message.getToUserId().equals(id))
                 .forEach(message -> messageMapper.updateIsReadById(message.getId()));
         return messageMapper.selectList(queryWrapper);
     }

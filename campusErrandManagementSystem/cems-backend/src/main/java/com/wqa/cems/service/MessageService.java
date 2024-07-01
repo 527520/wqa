@@ -13,7 +13,7 @@ import java.util.List;
 */
 public interface MessageService extends IService<Message> {
 
-    List<Message> getMessageList(Long id);
+    List<Message> getMessageList(Long id, Long counterpartId);
 
     List<MessageVO> getChatList(Long myId);
 
