@@ -35,6 +35,8 @@ import store from "@/store";
 import { LoginUserVO } from "../../generated";
 import sendMessage, { socket } from "@/access/websocket";
 import { useRoute } from "vue-router";
+import { MessageControllerService } from "../../generated/services/MessageControllerService";
+import message from "@arco-design/web-vue/es/message";
 
 interface Message {
   text: string;
@@ -43,7 +45,7 @@ interface Message {
 }
 
 const newMessage = ref("");
-const messages = reactive<Message[]>([]);
+const messages = ref<Message[]>([]);
 
 const messagesContainer = ref<HTMLElement | null>(null);
 
@@ -51,7 +53,7 @@ let loginUser: LoginUserVO;
 
 const send = () => {
   if (newMessage.value.trim() !== "") {
-    messages.push({
+    messages.value.push({
       text: newMessage.value,
       isMine: true,
       avatar: loginUser.userAvatar as string,
@@ -75,7 +77,7 @@ let toAvatar = "";
 socket.onmessage = (event) => {
   const messageText = JSON.parse(event.data);
   toAvatar = messageText.counterpartAvatar;
-  messages.push({
+  messages.value.push({
     text: messageText.messageText,
     isMine: false,
     avatar: messageText.counterpartAvatar,
@@ -98,14 +100,41 @@ onMounted(async () => {
     loginUser = store.state.user.loginUser;
   }
   toUserId = route.query.toUserId as any;
+  await fetchData();
   scrollToBottom();
 });
 
-watch(messages, () => {
+watch(messages.value, () => {
   nextTick(() => {
     scrollToBottom();
   });
 });
+
+const fetchData = async () => {
+  const res = await MessageControllerService.getMessageListUsingGet(toUserId);
+  if (res.code === 0) {
+    res.data?.forEach((item) => {
+      if (item.formUserId === loginUser.id) {
+        // 发送者是本人
+        messages.value.push({
+          text: item.content as string,
+          isMine: true,
+          avatar: item.formAvatar as string,
+        });
+      } else {
+        // 发送者是对方
+        messages.value.push({
+          text: item.content as string,
+          isMine: false,
+          avatar: item.toAvatar as string,
+        });
+      }
+    });
+    console.log(messages.value);
+  } else {
+    message.error("历史消息读取失败，" + res.message);
+  }
+};
 </script>
 
 <style>

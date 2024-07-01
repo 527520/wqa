@@ -17,6 +17,7 @@
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { connectWebSocket } from "@/access/websocket";
 
 const route = useRoute();
 
@@ -25,6 +26,7 @@ const route = useRoute();
  */
 const doInit = () => {
   console.log("哈哈哈哈哈哈哈哈哈哈，这是吴奇安的项目！");
+  connectWebSocket();
 };
 
 onMounted(() => {

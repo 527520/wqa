@@ -7,5 +7,6 @@ export type DeliverymanVOVO = {
     id?: number;
     name?: string;
     phoneNumber?: string;
+    userId?: number;
 };
 

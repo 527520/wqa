@@ -10,5 +10,6 @@ export type TaskVO = {
     price?: number;
     serviceType?: string;
     status?: string;
+    userId?: number;
 };
 

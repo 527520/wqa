@@ -15,6 +15,17 @@
       </a-descriptions-item>
     </a-descriptions>
     <div class="operate">
+      <template
+        v-if="
+          taskStatus === '已接单' ||
+          taskStatus === '配送中' ||
+          taskStatus === '已送达'
+        "
+      >
+        <a-button type="primary" @click="contactDelivery">联系跑腿员</a-button>
+      </template>
+    </div>
+    <div class="operate">
       <template v-if="taskStatus === '已取消'">
         <a-button type="outline" @click="rePublish">重新发布</a-button>
       </template>
@@ -228,6 +239,7 @@ const fetchData = async (taskId: number) => {
   if (res.code === 0) {
     const resData = res.data;
     data.forEach((item) => {
+      deliverymanUserId = resData?.deliveryman?.userId as any;
       switch (item.label) {
         case "订单编号":
           item.value = resData?.id ? resData.id.toString() : "";
@@ -423,6 +435,17 @@ const goToDeliverymanPortraits = () => {
     path: "/deliverymanPortraits",
     query: {
       deliverymanId: deliverymanId,
+    },
+  });
+};
+
+let deliverymanUserId: number;
+
+const contactDelivery = () => {
+  router.push({
+    path: "/chat",
+    query: {
+      toUserId: deliverymanUserId,
     },
   });
 };

@@ -16,6 +16,9 @@
       </a-descriptions-item>
     </a-descriptions>
     <div class="operate">
+      <a-button type="primary" @click="contactCustomer">联系顾客</a-button>
+    </div>
+    <div class="operate">
       <template v-if="taskStatus === '已接单'">
         <a-button type="primary" @click="toDelivery"
           >已取货 去配送
@@ -43,7 +46,7 @@ import {
   TaskUpdateStatusRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const size = ref("large");
 const taskStatus = ref("");
@@ -137,11 +140,15 @@ const data = reactive([
     value: "",
   },
 ]);
+
+let toId: number;
+
 const fetchData1 = async () => {
   // 等待联调
   const res = await OrderControllerService.deliverymanGetOrderVoUsingGet();
   if (res.code === 0) {
     const resData = res.data;
+    toId = resData?.task?.userId as number;
     evaluation(resData as OrderVO);
   } else {
     message.error("信息查询失败，" + res.message);
@@ -170,6 +177,7 @@ onMounted(() => {
 
 const evaluation = (resData: OrderVO) => {
   data.forEach((item) => {
+    userId = resData.task?.userId as number;
     switch (item.label) {
       case "订单编号":
         item.value = resData?.id ? resData.id.toString() : "";
@@ -268,6 +276,18 @@ const formatTime = (timestamp: string) => {
 const filteredData = computed(() => {
   return data.filter((item) => item.value?.trim() !== "");
 });
+
+let userId: number;
+const router = useRouter();
+
+const contactCustomer = () => {
+  router.push({
+    path: "/chat",
+    query: {
+      toUserId: userId,
+    },
+  });
+};
 </script>
 
 <style>

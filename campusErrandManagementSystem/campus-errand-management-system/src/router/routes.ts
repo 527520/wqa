@@ -27,6 +27,7 @@ import RecruitManagementView from "@/views/admin/RecruitManagementView.vue";
 import RecruitInfoView from "@/views/user/RecruitInfoView.vue";
 import DeliverymanPortraits from "@/views/deliveryman/DeliverymanPortraits.vue";
 import ChatView from "@/views/ChatView.vue";
+import MyMessageView from "@/views/MyMessageView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -209,6 +210,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       hideInMenu: true,
     },
+  },
+  {
+    path: "/myMessage",
+    name: "我的消息",
+    component: MyMessageView,
   },
   // {
   //   path: "/onlineMessage",
